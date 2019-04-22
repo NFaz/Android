@@ -30,6 +30,11 @@ class SiteFactory @Inject constructor(
     private val prevalenceStore: PrevalenceStore
 ) {
 
+    fun buildSite(url: String, title: String? = null) : Site{
+        val site = SiteMonitor(url, title)
+        return site
+    }
+
     fun build(url: String, title: String? = null): Site {
         val practices = privacyPractices.privacyPracticesFor(url)
         val memberNetwork = trackerNetworks.network(url)
@@ -39,5 +44,4 @@ class SiteFactory @Inject constructor(
         }
         return site
     }
-
 }

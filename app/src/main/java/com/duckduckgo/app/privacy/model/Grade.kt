@@ -17,9 +17,24 @@
 package com.duckduckgo.app.privacy.model
 
 import com.duckduckgo.app.privacy.model.Grade.Grading.*
+import com.duckduckgo.app.privacy.store.PrevalenceStore
+import com.duckduckgo.app.trackerdetection.model.TrackerNetwork
 import com.squareup.moshi.Json
 
-class Grade {
+class Grade(
+    val https: Boolean = false,
+    var privacyScore: Int? = null,
+    val prevalenceStore: PrevalenceStore,
+    memberNetwork: TrackerNetwork?
+) {
+
+    val httpsAutoUpgrade: Boolean = https // not support yet, don't penalise sites for now
+
+    init {
+        memberNetwork?.let {
+            setParentEntityAndPrevalence(it.name)
+        }
+    }
 
     enum class Grading {
 
@@ -49,16 +64,13 @@ class Grade {
         val enhanced: Score
     )
 
-    var https: Boolean = false
-    var httpsAutoUpgrade: Boolean = false
-    var privacyScore: Int? = null
 
-    val scores: Grade.Scores get() = calculate()
+    val scores: Scores get() = calculate()
 
     private var entitiesNotBlocked: Map<String, Double> = mapOf()
     private var entitiesBlocked: Map<String, Double> = mapOf()
 
-    private fun calculate(): Grade.Scores {
+    private fun calculate(): Scores {
 
         // HTTPS
         val siteHttpsScore: Int
@@ -147,18 +159,18 @@ class Grade {
         }
     }
 
-    fun setParentEntityAndPrevalence(parentEntity: String?, prevalence: Double?) {
+    fun setParentEntityAndPrevalence(parentEntity: String?) {
         parentEntity ?: return
-        addEntityNotBlocked(parentEntity, prevalence)
+        addEntityNotBlocked(parentEntity)
     }
 
-    fun addEntityNotBlocked(entity: String, prevalence: Double?) {
-        prevalence ?: return
+    fun addEntityNotBlocked(entity: String) {
+        val prevalence = prevalenceStore.findPrevalenceOf(entity) ?: return
         entitiesNotBlocked = entitiesNotBlocked.plus(Pair(entity, prevalence))
     }
 
-    fun addEntityBlocked(entity: String, prevalence: Double?) {
-        prevalence ?: return
+    fun addEntityBlocked(entity: String) {
+        val prevalence = prevalenceStore.findPrevalenceOf(entity) ?: return
         entitiesBlocked = entitiesBlocked.plus(Pair(entity, prevalence))
     }
 

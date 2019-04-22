@@ -40,7 +40,7 @@ interface Site {
     var hasHttpResources: Boolean
     fun trackerDetected(event: TrackingEvent)
 
-    val grade: PrivacyGrade
-    val improvedGrade: PrivacyGrade
+    fun calculateGrade(): PrivacyGrade
+    fun calculateImprovedGrade(): PrivacyGrade
 
 }

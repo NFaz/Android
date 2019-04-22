@@ -74,17 +74,20 @@ class ScorecardViewModel(private val settingsStore: PrivacySettingsStore) : View
     }
 
     private fun updateSite(site: Site) {
+        val grade = site.calculateGrade()
+        val improvedGrade = site.calculateImprovedGrade()
+
         viewState.value = viewState.value?.copy(
             domain = site.uri?.host ?: "",
-            beforeGrade = site.grade,
-            afterGrade = site.improvedGrade,
+            beforeGrade = grade,
+            afterGrade = improvedGrade,
             trackerCount = site.trackerCount,
             majorNetworkCount = site.majorNetworkCount,
             httpsStatus = site.https,
             allTrackersBlocked = site.allTrackersBlocked,
             practices = site.privacyPractices.summary,
             showIsMemberOfMajorNetwork = site.memberNetwork?.isMajor ?: false,
-            showEnhancedGrade = site.grade != site.improvedGrade
+            showEnhancedGrade = grade != improvedGrade
         )
     }
 }

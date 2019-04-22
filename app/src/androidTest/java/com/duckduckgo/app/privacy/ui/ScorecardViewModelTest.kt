@@ -165,8 +165,8 @@ class ScorecardViewModelTest {
         whenever(site.majorNetworkCount).thenReturn(majorNetworkCount)
         whenever(site.allTrackersBlocked).thenReturn(allTrackersBlocked)
         whenever(site.privacyPractices).thenReturn(privacyPractices)
-        whenever(site.grade).thenReturn(grade)
-        whenever(site.improvedGrade).thenReturn(improvedGrade)
+        whenever(site.calculateGrade).thenReturn(grade)
+        whenever(site.calculateImprovedGrade).thenReturn(improvedGrade)
         return site
     }
 }

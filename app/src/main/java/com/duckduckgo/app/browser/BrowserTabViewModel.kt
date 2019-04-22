@@ -447,7 +447,7 @@ class BrowserTabViewModel(
 
     private fun onSiteChanged() {
         siteLiveData.postValue(site)
-        privacyGrade.postValue(site?.improvedGrade)
+        privacyGrade.postValue(site?.calculateImprovedGrade())
         tabRepository.update(tabId, site)
     }
 

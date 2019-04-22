@@ -39,14 +39,7 @@ class SiteMonitor(
 
     init {
         val isHttps = https != HttpsStatus.NONE
-        gradeCalculator = Grade(isHttps)
-        
-        gradeCalculator.httpsAutoUpgrade = gradeCalculator.https // not support yet, don't penalise sites for now
-        gradeCalculator.privacyScore = privacyPractices.score
-
-        memberNetwork?.let {
-            gradeCalculator.setParentEntityAndPrevalence(it.name, prevalenceStore.findPrevalenceOf(it.name))
-        }
+        gradeCalculator = Grade(isHttps, privacyPractices.score, prevalenceStore, memberNetwork)
     }
 
     override val uri: Uri?
@@ -97,19 +90,21 @@ class SiteMonitor(
         trackingEvents.add(event)
 
         val entity = event.entity
-        val prevalence = prevalenceStore.findPrevalenceOf(entity)
+
         if (event.blocked) {
-            gradeCalculator.addEntityBlocked(entity, prevalence)
+            gradeCalculator.addEntityBlocked(entity)
         } else {
-            gradeCalculator.addEntityNotBlocked(entity, prevalence)
+            gradeCalculator.addEntityNotBlocked(entity)
         }
     }
 
-    override val grade: PrivacyGrade
-        get() = privacyGrade(gradeCalculator.scores.site.grade)
+    override fun calculateGrade(): PrivacyGrade {
+        return privacyGrade(gradeCalculator.scores.site.grade)
+    }
 
-    override val improvedGrade: PrivacyGrade
-        get() = privacyGrade(gradeCalculator.scores.enhanced.grade)
+    override fun calculateImprovedGrade(): PrivacyGrade {
+        return privacyGrade(gradeCalculator.scores.enhanced.grade)
+    }
 
     private fun privacyGrade(grade: Grade.Grading): PrivacyGrade {
         return when (grade) {

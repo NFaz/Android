@@ -35,10 +35,12 @@ class SiteMonitor(
     val prevalenceStore: PrevalenceStore
 ) : Site {
 
-    private val gradeCalculator = Grade()
+    private val gradeCalculator: Grade
 
     init {
-        gradeCalculator.https = uri?.isHttps ?: false
+        val isHttps = https != HttpsStatus.NONE
+        gradeCalculator = Grade(isHttps)
+        
         gradeCalculator.httpsAutoUpgrade = gradeCalculator.https // not support yet, don't penalise sites for now
         gradeCalculator.privacyScore = privacyPractices.score
 

@@ -39,6 +39,7 @@ interface Site {
     val allTrackersBlocked: Boolean
     var hasHttpResources: Boolean
     fun trackerDetected(event: TrackingEvent)
+    fun updateData(practices: PrivacyPractices.Practices, memberNetwork: TrackerNetwork?)
 
     fun calculateGrade(): PrivacyGrade
     fun calculateImprovedGrade(): PrivacyGrade

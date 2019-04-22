@@ -223,7 +223,7 @@ class BrowserTabViewModel(
         site = siteLiveData.value
 
         initialUrl?.let {
-            site = siteFactory.build(it)
+            site = siteFactory.buildSite(it)
         }
     }
 
@@ -412,7 +412,7 @@ class BrowserTabViewModel(
             statisticsUpdater.refreshSearchRetentionAtb()
         }
         pendingUrl = null
-        site = siteFactory.build(url)
+        site = siteFactory.buildSite(url)
         onSiteChanged()
     }
 

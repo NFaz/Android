@@ -30,22 +30,22 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class SiteMonitor(
     override val url: String,
-    override val privacyPractices: PrivacyPractices.Practices,
-    override val memberNetwork: TrackerNetwork? = null,
+    override var title: String?,
     val prevalenceStore: PrevalenceStore
+
 ) : Site {
 
+    override var privacyPractices: PrivacyPractices.Practices = PrivacyPractices.UNKNOWN
+    override var memberNetwork: TrackerNetwork? = null
     private val gradeCalculator: Grade
 
     init {
         val isHttps = https != HttpsStatus.NONE
-        gradeCalculator = Grade(isHttps, privacyPractices.score, prevalenceStore, memberNetwork)
+        gradeCalculator = Grade(isHttps, prevalenceStore)
     }
 
     override val uri: Uri?
         get() = Uri.parse(url)
-
-    override var title: String? = null
 
     override val https: HttpsStatus
         get() = httpsStatus()
@@ -74,6 +74,12 @@ class SiteMonitor(
 
     override val allTrackersBlocked: Boolean
         get() = trackingEvents.none { !it.blocked }
+
+    override fun updateData(practices: PrivacyPractices.Practices, memberNetwork: TrackerNetwork?) {
+        this.privacyPractices = practices
+        this.memberNetwork = memberNetwork
+        gradeCalculator.updateData(privacyPractices.score, memberNetwork)
+    }
 
     private fun httpsStatus(): HttpsStatus {
 

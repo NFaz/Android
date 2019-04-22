@@ -50,7 +50,7 @@ class TabDataRepository @Inject constructor(private val tabsDao: TabsDao, privat
     private fun buildSiteData(url: String?): MutableLiveData<Site> {
         val data = MutableLiveData<Site>()
         url?.let {
-            val siteMonitor = siteFactory.build(it)
+            val siteMonitor = siteFactory.buildSite(it)
             data.value = siteMonitor
         }
         return data

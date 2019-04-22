@@ -23,18 +23,8 @@ import com.squareup.moshi.Json
 
 class Grade(
     val https: Boolean = false,
-    var privacyScore: Int? = null,
-    val prevalenceStore: PrevalenceStore,
-    memberNetwork: TrackerNetwork?
+    val prevalenceStore: PrevalenceStore
 ) {
-
-    val httpsAutoUpgrade: Boolean = https // not support yet, don't penalise sites for now
-
-    init {
-        memberNetwork?.let {
-            setParentEntityAndPrevalence(it.name)
-        }
-    }
 
     enum class Grading {
 
@@ -50,7 +40,6 @@ class Grade(
         D_MINUS
     }
 
-
     data class Score(
         val grade: Grading,
         val score: Int,
@@ -64,11 +53,19 @@ class Grade(
         val enhanced: Score
     )
 
-
+    var privacyScore: Int? = null
+    val httpsAutoUpgrade: Boolean = https // not supported yet, don't penalise sites for now
     val scores: Scores get() = calculate()
 
     private var entitiesNotBlocked: Map<String, Double> = mapOf()
     private var entitiesBlocked: Map<String, Double> = mapOf()
+
+    fun updateData(privacyScore: Int, memberNetwork: TrackerNetwork?) {
+        this.privacyScore = privacyScore
+        memberNetwork?.let {
+            setParentEntityAndPrevalence(it.name)
+        }
+    }
 
     private fun calculate(): Scores {
 
